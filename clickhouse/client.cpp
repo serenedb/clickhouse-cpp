@@ -205,6 +205,8 @@ public:
 
     void SelectWithExternalData(Query query, const ExternalTables& external_tables);
 
+    void BeginSelectWithExternalData(const Query& query, const ExternalTables& external_tables);
+
     void SendCancel();
 
     void Cancel();
@@ -439,6 +441,22 @@ void Client::Impl::SelectWithExternalData(Query query, const ExternalTables& ext
 
     while (NextBlock().has_value()) {
         ;
+    }
+}
+
+void Client::Impl::BeginSelectWithExternalData(const Query& query, const ExternalTables& external_tables) {
+    if (server_info_.revision < DBMS_MIN_REVISION_WITH_TEMPORARY_TABLES) {
+       throw UnimplementedError("This version of ClickHouse server doesn't support temporary tables");
+    }
+
+    BeginExecuteQuery(query, /*finalize=*/ false);
+    try {
+        SendExternalData(external_tables);
+        FinalizeQuery();
+    }
+    catch (...) {
+        ResetState();
+        throw;
     }
 }
 
@@ -1342,6 +1360,10 @@ void Client::BeginExecute(const Query& query) {
 
 void Client::BeginSelect(const Query& query) {
     impl_->BeginExecuteQuery(query);
+}
+
+void Client::BeginSelectWithExternalData(const Query& query, const ExternalTables& external_tables) {
+    impl_->BeginSelectWithExternalData(query, external_tables);
 }
 
 void Client::BeginSelect(const char* query)

@@ -289,6 +289,10 @@ public:
     void BeginSelect(const std::string& query);
     void BeginSelect(const std::string& query, const std::string& query_id);
 
+    /// EXPERIMENTAL. Same as SelectWithExternalData but interactive: data is
+    /// returned on consequent calls to NextBlock().
+    void BeginSelectWithExternalData(const Query& query, const ExternalTables& external_tables);
+
     /// Returns the next block in the dataset after using BeginSelect family of functions
     /// functions.
     std::optional<Block> NextBlock();
