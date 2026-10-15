@@ -84,4 +84,8 @@ ColumnRef ColumnMap::GetAsColumn(size_t n) const {
     return data_->GetAsColumn(n);
 }
 
+std::shared_ptr<const ColumnArray> ColumnMap::GetData() const {
+    return data_;
+}
+
 }  // namespace clickhouse
