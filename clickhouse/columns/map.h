@@ -58,6 +58,8 @@ public:
     /// Type of row is tuple {key, value}.
     ColumnRef GetAsColumn(size_t n) const;
 
+    std::shared_ptr<const ColumnArray> GetData() const;
+
 protected:
     template <typename K, typename V>
     friend class ColumnMapT;
