@@ -3,6 +3,7 @@
 #include "string.h"
 #include "nullable.h"
 #include "numeric.h"
+#include "bool.h"
 #include "enum.h"
 #include "date.h"
 #include "ip4.h"
@@ -93,6 +94,7 @@ inline size_t FixedSizeForDictionaryType(Type::Code code) {
     switch (code) {
         case Type::Int8:
         case Type::UInt8:
+        case Type::Bool:
             return 1;
         case Type::Int16:
         case Type::UInt16:
@@ -201,6 +203,9 @@ inline void AppendToDictionary(Column& dictionary, const ItemView & item) {
             return;
         case Type::UInt8:
             column_down_cast<ColumnUInt8>(dictionary).Append(item.get<uint8_t>());
+            return;
+        case Type::Bool:
+            column_down_cast<ColumnBool>(dictionary).Append(item.get<uint8_t>() != 0);
             return;
         case Type::UInt16:
             column_down_cast<ColumnUInt16>(dictionary).Append(item.get<uint16_t>());
